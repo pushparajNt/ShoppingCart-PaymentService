@@ -1,12 +1,22 @@
 package com.paymentservice.serviceimpl;
 
 import java.time.Instant;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.repository.query.FluentQuery.FetchableFluentQuery;
 import org.springframework.stereotype.Service;
 
 import com.paymentservice.entity.PaymentDetails;
+import com.paymentservice.model.PaymentMode;
 import com.paymentservice.model.PaymentRequest;
+import com.paymentservice.model.PaymentResponse;
 import com.paymentservice.repository.PaymentDetailsRepository;
 import com.paymentservice.service.PaymentService;
 
@@ -38,4 +48,24 @@ public class PaymentServiceImpl implements PaymentService {
 		return details.getId();
 	}
 
+	@Override
+	public PaymentResponse getPaymentDetails(Long id) {
+		
+		log.info("Going to get the payment details for order id"+id);
+		PaymentDetails paymentDetails=paymentDetailsRepository.findByOrderId(id);
+				
+		PaymentResponse paymentResponse=
+				PaymentResponse.builder()
+				.paymentId(paymentDetails.getId())
+				.orderId(paymentDetails.getOrderId())
+				.paymentDate(paymentDetails.getPaymentDate())
+				.paymentStatus(paymentDetails.getPaymentStatus())
+				.paymentMode(PaymentMode.valueOf(paymentDetails.getPaymentMode()))
+				.amount(paymentDetails.getAmount())
+				.build();
+		log.info("Successfully retrived  payment details for order id"+id);
+		return paymentResponse;
+	}
+
+	
 }

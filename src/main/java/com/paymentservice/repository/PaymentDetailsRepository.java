@@ -8,4 +8,5 @@ import com.paymentservice.entity.PaymentDetails;
 @Repository
 public interface PaymentDetailsRepository extends JpaRepository<PaymentDetails, Long>{
 
+	PaymentDetails findByOrderId(long orderId);
 }
